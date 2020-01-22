@@ -1,0 +1,57 @@
+<html>
+<head>
+	<title>WebGL Solution</title>
+
+	<script type="text/javascript" src="glMatrix-0.9.5.min.js"></script>
+	<script type="text/javascript" src="index.js"></script>
+
+	<script id="shader-fs" type="x-shader/x-fragment">
+		precision mediump float;
+
+		void main(void) {
+			gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+		}
+	</script>
+
+	<script id="shader-vs" type="x-shader/x-vertex">
+		attribute vec3 aVertexPosition;
+
+		uniform mat4 uMVMatrix;
+		uniform mat4 uPMatrix;
+
+		void main(void) {
+			mat4 result = uPMatrix * uMVMatrix;
+			
+			mat3 m3;
+			
+			// linha X coluna
+			m3[0][0] = result[0][0]; // a
+			m3[0][1] = result[0][1]; // b
+			m3[0][2] = result[0][3]; // d
+			                 
+			m3[1][0] = result[1][0]; // e
+			m3[1][1] = result[1][1]; // f
+			m3[1][2] = result[1][3]; // h
+			                 
+			m3[2][0] = result[3][0] + (aVertexPosition.z * result[2][0]); // n + z * i
+			m3[2][1] = result[3][1] + (aVertexPosition.z * result[2][1]); // o + z * j
+			m3[2][2] = result[3][3] + (aVertexPosition.z * result[2][3]); // q + z * m
+			
+			vec3 position = m3 * vec3(aVertexPosition.xy, 1.0);
+			
+			gl_Position = vec4(position.xy, 0.0, position.z);
+			
+			//gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+			
+			//gl_Position.xyz = gl_Position.xyz / gl_Position.w;
+			//gl_Position.w = 1.0;
+			//
+			//gl_Position.xy = gl_Position.xy / gl_Position.z;
+			//gl_Position.z = 0.0;
+		}
+	</script>
+</head>
+	<body onload="webGLStart(document.getElementById('lesson01-canvas'));">
+		<canvas id="lesson01-canvas" style="border: none;" width="500" height="500"></canvas>
+	</body>
+</html>
